@@ -2,7 +2,6 @@
 
 #include <vector>
 
-#include "Word.h"
 #include "AESConstants.h"
 
 //Utilizada tanto para o estado da matriz como para as keys
@@ -18,6 +17,6 @@ public:
     
     CStateMatrix XOR(const CStateMatrix& stateMatrix) const;
 
-    std::array<CWord, WORDS_PER_STATE> m_Matrix;
+    std::array<WORD, WORDS_PER_STATE> m_Matrix;
 };
 

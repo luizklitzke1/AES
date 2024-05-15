@@ -129,13 +129,11 @@
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="StateMatrix.cpp" />
-    <ClCompile Include="Word.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AESConstants.h" />
     <ClInclude Include="AESUtils.h" />
     <ClInclude Include="StateMatrix.h" />
-    <ClInclude Include="Word.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

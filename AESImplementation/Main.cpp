@@ -57,19 +57,20 @@ int main()
         CStateMatrix roundKey;
 
 #pragma region Gerar primeira Word da RoundKey
-        CWord& firstWord = roundKey.m_Matrix[0];
-
         //1 - Copia última palavra da round key anterior
-        firstWord = aKeySchedule[idxRoundKey - 1].m_Matrix[WORDS_PER_STATE - 1];
+        WORD firstWord = aKeySchedule[idxRoundKey - 1].m_Matrix[WORDS_PER_STATE - 1];
         
         //2 - Rotacionar os bytes
-        firstWord.Rotate();
+        firstWord = RotWord(firstWord);
 
         //3 - Substituição de palavra com a SBOX
-       
+        firstWord = SubBytes(firstWord);
 
         //4 - Geração da RoundConstant
-        const CWord roundConstant = { ROUND_CONSTANTS[idxRoundKey] , 0x00, 0x00, 0x00 };
+        const WORD roundConstant = { ROUND_CONSTANTS[idxRoundKey - 1] , 0x00, 0x00, 0x00 };
+
+        //5 - XOR das etapas (3) e (4) 
+        firstWord = XORWords(firstWord, roundConstant);
 #pragma endregion
 
     }

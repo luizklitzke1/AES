@@ -43,9 +43,31 @@ ULONG GetMostSignificantBits(long value)
     return static_cast<ULONG>(value) >> 4;
 }
 
-CWord XORWords(const CWord& wordA, const CWord& wordB)
+WORD RotWord(const WORD word)
 {
-    CWord wordResult;
+    return { word[1], word[2], word[3], word[0] };
+}
+
+WORD SubBytes(const WORD word)
+{
+    WORD wordRetorno = word;
+
+    for (size_t idxValue = 0; idxValue < WORD_LENGTH; ++idxValue)
+    {
+        long& lValue = wordRetorno[idxValue];
+
+        const ULONG ulMostSignificantBitsValue  = GetMostSignificantBits (lValue);
+        const ULONG ulLeastSignificantBitsValue = GetLeastSignificantBits(lValue);
+
+        lValue = SBOX[ulMostSignificantBitsValue][ulLeastSignificantBitsValue];
+    }
+
+    return wordRetorno;
+}
+
+WORD XORWords(const WORD& wordA, const WORD& wordB)
+{
+    WORD wordResult;
 
     for (size_t idxValue = 0; idxValue < WORD_LENGTH; ++idxValue)
         wordResult[idxValue] = wordA[idxValue] ^ wordB[idxValue];
