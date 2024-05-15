@@ -6,12 +6,13 @@
 
 bool CAESUtils::IsNumber(const std::string s)
 {
-    std::string::const_iterator it = s.begin();
+    for (const char c : s)
+    {
+        if (c < '0' || c >> '9')
+            return false;
+    }
 
-    while (it != s.end() && std::isdigit(*it))
-        ++it;
-
-    return !s.empty() && it == s.end();
+    return true;
 }
 
 ULONG CAESUtils::GetLeastSignificantBits(long value)
@@ -26,12 +27,12 @@ ULONG CAESUtils::GetMostSignificantBits(long value)
     return static_cast<ULONG>(value) >> 4;
 }
 
-WORD CAESUtils::RotWord(const WORD& word)
+AESWORD CAESUtils::RotWord(const AESWORD& word)
 {
     return { word[1], word[2], word[3], word[0] };
 }
 
-WORD CAESUtils::SubWord(const WORD& word)
+AESWORD CAESUtils::SubWord(const AESWORD& word)
 {
     const long SBOX[S_BOX_DIM][S_BOX_DIM] =
     {
@@ -53,7 +54,7 @@ WORD CAESUtils::SubWord(const WORD& word)
         { 0x8c, 0xa1, 0x89, 0x0d, 0xbf, 0xe6, 0x42, 0x68, 0x41, 0x99, 0x2d, 0x0f, 0xb0, 0x54, 0xbb, 0x16}
     };
 
-    WORD wordRetorno = word;
+    AESWORD wordRetorno = word;
 
     for (size_t idxValue = 0; idxValue < WORD_LENGTH; ++idxValue)
     {
@@ -68,9 +69,9 @@ WORD CAESUtils::SubWord(const WORD& word)
     return wordRetorno;
 }
 
-WORD CAESUtils::XORWords(const WORD& wordA, const WORD& wordB)
+AESWORD CAESUtils::XORWords(const AESWORD& wordA, const AESWORD& wordB)
 {
-    WORD wordResult;
+    AESWORD wordResult;
 
     for (size_t idxValue = 0; idxValue < WORD_LENGTH; ++idxValue)
         wordResult[idxValue] = wordA[idxValue] ^ wordB[idxValue];
@@ -78,7 +79,7 @@ WORD CAESUtils::XORWords(const WORD& wordA, const WORD& wordB)
     return wordResult;
 }
 
-std::string CAESUtils::WordToString(const WORD& word)
+std::string CAESUtils::WordToString(const AESWORD& word)
 {
     std::string sRetorno = "[ ";
 

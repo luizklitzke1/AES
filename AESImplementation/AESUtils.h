@@ -12,9 +12,9 @@ public:
     static ULONG GetLeastSignificantBits(long value);
     static ULONG GetMostSignificantBits(long value);
 
-    static WORD RotWord (const WORD& word);
-    static WORD SubWord (const WORD& word);
-    static WORD XORWords(const WORD& wordA, const WORD& wordB);
+    static AESWORD RotWord (const AESWORD& word);
+    static AESWORD SubWord (const AESWORD& word);
+    static AESWORD XORWords(const AESWORD& wordA, const AESWORD& wordB);
 
-    static std::string WordToString(const WORD& word);
+    static std::string WordToString(const AESWORD& word);
 };

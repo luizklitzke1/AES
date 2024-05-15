@@ -11,33 +11,43 @@
 #include "AESUtils.h"
 #include "StateMatrix.h"
 
+#include <conio.h>
+#include "windows.h"
+
 using namespace std;
 
 int main()
 {
+    SetConsoleCP      (1252);
+    SetConsoleOutputCP(1252);
+
     bool bGenerateLog = true;
 
     stringstream sKey("65, 66 , 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80");
     
     string sSegment;
     vector<string> aKeySegments;
-    while (getline(sKey, sSegment, ',')){ aKeySegments.push_back(sSegment);}
+    while (getline(sKey, sSegment, ','))
+    { 
+        sSegment.erase(std::remove_if(sSegment.begin(), sSegment.end(), ::isspace), sSegment.end());
+        aKeySegments.push_back(sSegment);
+    }
 
     vector<long> aKey;
     aKey.reserve(aKeySegments.size());
 
-    for (const string sKeySegment : aKeySegments)
+    for (string& sKeySegment : aKeySegments)
     {
         if (CAESUtils::IsNumber(sKeySegment) == false)
         {
-            cout << "Valor não número informado para um segmento da chave." << endl;
+            cout << "Valor não númerico informado para um segmento da chave: " << sKeySegment << endl;
             return 1;
         }
 
         long lValue = stol(sKeySegment);
         if (lValue > 255)
         {
-            cout << "Valor superior a 255 informado para um segmento da chave." << endl;
+            cout << "Valor superior a 255 informado para um segmento da chave: " << sKeySegment << endl;
             return 1;
         }
 
@@ -62,7 +72,7 @@ int main()
 
 #pragma region Gerar primeira Word da RoundKey
         //1 - Copia última palavra da round key anterior
-        WORD& firstWord = aKeySchedule[idxRoundKey - 1][WORDS_PER_STATE - 1];
+        AESWORD& firstWord = aKeySchedule[idxRoundKey - 1][WORDS_PER_STATE - 1];
         if (bGenerateLog) cout << "1) Cópia da última palavra da roundkey anterior: " + CAESUtils::WordToString(firstWord) << endl;
         
         //2 - Rotacionar os bytes
@@ -74,7 +84,7 @@ int main()
         if (bGenerateLog) cout << "3) Substituir os bytes da palavra (SubWord): " + CAESUtils::WordToString(firstWord) << endl;
 
         //4 - Geração da RoundConstant
-        const WORD roundConstant = { ROUND_CONSTANTS[idxRoundKey - 1] , 0x00, 0x00, 0x00 };
+        const AESWORD roundConstant = { ROUND_CONSTANTS[idxRoundKey - 1] , 0x00, 0x00, 0x00 };
         if (bGenerateLog) cout << "4) Gerar a RoundConstant: " + CAESUtils::WordToString(roundConstant) << endl;
 
         //5 - XOR das etapas (3) e (4) 
@@ -92,6 +102,8 @@ int main()
         {
             //XOR com a palavra imediatamente anterior e a palavra de posição equivalente na round key anterior.
             roundKey[idxWord] = CAESUtils::XORWords(roundKey[idxWord - 1], aKeySchedule[idxRoundKey - 1][idxWord]);
+
+            if (bGenerateLog) cout << "W" << ROUND_KEY_SIZE * idxRoundKey + idxWord << " = W" << ROUND_KEY_SIZE * idxRoundKey + idxWord - 1 << " XOR W" << ROUND_KEY_SIZE * (idxRoundKey - 1) + idxWord << endl;
         }
 #pragma endregion
 
