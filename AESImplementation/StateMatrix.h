@@ -13,8 +13,6 @@ public:
     void SubBytes  ();
     void ShiftRows ();
     void MixColumns();
-    
-    CStateMatrix XOR(const CStateMatrix& stateMatrix) const;
 
     AESWORD& operator[](std::size_t index);
     const AESWORD& operator[](std::size_t index) const;

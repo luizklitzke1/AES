@@ -27,12 +27,7 @@ ULONG CAESUtils::GetMostSignificantBits(long value)
     return static_cast<ULONG>(value) >> 4;
 }
 
-AESWORD CAESUtils::RotWord(const AESWORD& word)
-{
-    return { word[1], word[2], word[3], word[0] };
-}
-
-AESWORD CAESUtils::SubWord(const AESWORD& word)
+long CAESUtils::SubByte(const long lValue)
 {
     const long SBOX[S_BOX_DIM][S_BOX_DIM] =
     {
@@ -54,19 +49,25 @@ AESWORD CAESUtils::SubWord(const AESWORD& word)
         { 0x8c, 0xa1, 0x89, 0x0d, 0xbf, 0xe6, 0x42, 0x68, 0x41, 0x99, 0x2d, 0x0f, 0xb0, 0x54, 0xbb, 0x16}
     };
 
+    const ULONG ulMostSignificantBitsValue  = GetMostSignificantBits (lValue);
+    const ULONG ulLeastSignificantBitsValue = GetLeastSignificantBits(lValue);
+
+    return SBOX[ulMostSignificantBitsValue][ulLeastSignificantBitsValue];
+}
+
+AESWORD CAESUtils::SubWord(const AESWORD& word)
+{
     AESWORD wordRetorno = word;
 
     for (size_t idxValue = 0; idxValue < WORD_LENGTH; ++idxValue)
-    {
-        long& lValue = wordRetorno[idxValue];
-
-        const ULONG ulMostSignificantBitsValue  = GetMostSignificantBits (lValue);
-        const ULONG ulLeastSignificantBitsValue = GetLeastSignificantBits(lValue);
-
-        lValue = SBOX[ulMostSignificantBitsValue][ulLeastSignificantBitsValue];
-    }
+        wordRetorno[idxValue] = CAESUtils::SubByte(word[idxValue]);
 
     return wordRetorno;
+}
+
+AESWORD CAESUtils::RotWord(const AESWORD& word)
+{
+    return { word[1], word[2], word[3], word[0] };
 }
 
 AESWORD CAESUtils::XORWords(const AESWORD& wordA, const AESWORD& wordB)
@@ -77,6 +78,16 @@ AESWORD CAESUtils::XORWords(const AESWORD& wordA, const AESWORD& wordB)
         wordResult[idxValue] = wordA[idxValue] ^ wordB[idxValue];
 
     return wordResult;
+}
+
+CStateMatrix CAESUtils::XORStates(const CStateMatrix& stateMatrixA, const CStateMatrix& stateMatrixB)
+{
+    CStateMatrix matrixResult;
+
+    for (size_t idxWord = 0; idxWord < WORDS_PER_STATE; ++idxWord)
+        matrixResult[idxWord] = XORWords(stateMatrixA[idxWord], stateMatrixB[idxWord]);
+
+    return matrixResult;
 }
 
 std::string CAESUtils::WordToString(const AESWORD& word)
