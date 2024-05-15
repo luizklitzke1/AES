@@ -1,7 +1,6 @@
 #pragma once
 
 #include <vector>
-
 #include "AESConstants.h"
 
 //Utilizada tanto para o estado da matriz como para as keys
@@ -17,6 +16,10 @@ public:
     
     CStateMatrix XOR(const CStateMatrix& stateMatrix) const;
 
+    WORD& operator[](std::size_t index);
+    const WORD& operator[](std::size_t index) const;
+
+private:
     std::array<WORD, WORDS_PER_STATE> m_Matrix;
 };
 

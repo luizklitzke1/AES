@@ -1,4 +1,5 @@
 #pragma once
+#include <stdexcept>
 
 #include "StateMatrix.h"
 #include "AESUtils.h"
@@ -25,4 +26,20 @@ CStateMatrix XOR(const CStateMatrix& stateMatrix)
     //TODO
     CStateMatrix todo;
     return todo;
+}
+
+WORD& CStateMatrix::operator[](std::size_t index)
+{
+    if (index >= WORDS_PER_STATE)
+        throw std::out_of_range("Index out of range");
+
+    return m_Matrix[index];
+}
+
+const WORD& CStateMatrix::operator[](std::size_t index) const
+{
+    if (index >= WORDS_PER_STATE)
+        throw std::out_of_range("Index out of range");
+
+    return m_Matrix[index];
 }
