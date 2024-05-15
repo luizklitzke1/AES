@@ -85,7 +85,7 @@ std::string CAESUtils::WordToString(const AESWORD& word)
 
     std::ostringstream oss;
     for (const long& lValue : word)
-        oss << std::hex << lValue << " ";
+        oss << "0x" << std::hex << lValue << " ";
 
     sRetorno += oss.str();
 

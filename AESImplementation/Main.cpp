@@ -68,11 +68,11 @@ int main()
     {
         if (bGenerateLog) cout << "\n**** RoundKey = " << idxRoundKey << " ****" << endl;
 
-        CStateMatrix roundKey;
+        CStateMatrix& roundKey = aKeySchedule[idxRoundKey];
 
 #pragma region Gerar primeira Word da RoundKey
         //1 - Copia última palavra da round key anterior
-        AESWORD& firstWord = aKeySchedule[idxRoundKey - 1][WORDS_PER_STATE - 1];
+        AESWORD firstWord = aKeySchedule[idxRoundKey - 1][WORDS_PER_STATE - 1];
         if (bGenerateLog) cout << "1) Cópia da última palavra da roundkey anterior: " + CAESUtils::WordToString(firstWord) << endl;
         
         //2 - Rotacionar os bytes
@@ -94,6 +94,8 @@ int main()
         //6 - XOR de (5) com a 1ª palavra da roundkey anterior
         firstWord = CAESUtils::XORWords(firstWord, aKeySchedule[idxRoundKey - 1][0]);
         if (bGenerateLog) cout << "6) XOR 1a. palavra da roundkey anterior com (5): " + CAESUtils::WordToString(firstWord) << endl;
+
+        roundKey[0] = firstWord;
 
 #pragma endregion
 
