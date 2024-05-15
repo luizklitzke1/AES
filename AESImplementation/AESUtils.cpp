@@ -8,7 +8,7 @@ bool CAESUtils::IsNumber(const std::string s)
 {
     for (const char c : s)
     {
-        if (c < '0' || c >> '9')
+        if (c < '0' || c > '9')
             return false;
     }
 
