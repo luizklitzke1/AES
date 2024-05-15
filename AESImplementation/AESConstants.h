@@ -12,6 +12,7 @@ const long WORDS_PER_STATE = 4;
 using WORD = std::array<long, WORD_LENGTH>;
 
 const long ROUND_KEY_AMOUNT = 11;
+const long ROUND_KEY_SIZE   = 4;
 
 
 const long S_BOX_DIM = 16;

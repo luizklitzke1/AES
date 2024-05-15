@@ -73,6 +73,14 @@ int main()
         firstWord = XORWords(firstWord, roundConstant);
 #pragma endregion
 
+#pragma region Gerar demais words da RoundKey
+        for (size_t idxWord = 1; idxWord < ROUND_KEY_SIZE; ++idxWord)
+        {
+            //XOR com a palavra imediatamente anterior e a palavra de posição equivalente na round key anterior.
+            roundKey.m_Matrix[idxWord] = XORWords(roundKey.m_Matrix[idxWord - 1], aKeySchedule[idxRoundKey].m_Matrix[idxWord + 1]);
+        }
+#pragma endregion
+
     }
 
 #pragma endregion
