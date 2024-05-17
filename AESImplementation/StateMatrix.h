@@ -14,6 +14,8 @@ public:
     void ShiftRows ();
     void MixColumns();
 
+    std::string ToString();
+
     AESWORD& operator[](std::size_t index);
     const AESWORD& operator[](std::size_t index) const;
 

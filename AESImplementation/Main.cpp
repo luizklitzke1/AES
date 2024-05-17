@@ -109,9 +109,13 @@ int main()
         }
 #pragma endregion
 
+        if (bGenerateLog) cout << endl << roundKey.ToString() << endl;
     }
 
 #pragma endregion
 
+#pragma region Criptografar dados
+
+#pragma endregion
    
 }

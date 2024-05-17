@@ -32,7 +32,50 @@ void CStateMatrix::ShiftRows()
 
 void CStateMatrix::MixColumns()
 {
+    long multiplicationMatrix[4][4] = { { 2, 1, 1, 3 },
+                                        { 3, 2, 1, 1 },
+                                        { 1, 3, 2, 1 },
+                                        { 1, 1, 3, 2 }};
+
+    //Matriz que armazena o resultado final dessa função
+    CStateMatrix resultMatrix;
+
+    for (size_t idxWord = 0; idxWord < WORDS_PER_STATE; ++idxWord)
+    {
+        const long lCol = idxWord;
+
+        for (size_t idxValue = 0; idxValue < WORD_LENGTH; ++idxValue)
+        {
+            const long lRow = idxValue;
+
+            long lFinalValue = 0;
+
+            for (size_t idxMult = 0; idxMult < WORD_LENGTH; ++idxMult)
+            {
+                long lCurrentMultValue = CAESUtils::GaloisFieldMultiplication(m_Matrix[lCol][idxMult], multiplicationMatrix[lRow][idxMult]);
+
+                if (idxMult == 0)
+                    lFinalValue = lCurrentMultValue;
+                else
+                    lFinalValue ^ lCurrentMultValue;
+            }
+        }
+    }
+
 }
+
+std::string CStateMatrix::ToString()
+{
+    std::string sRetorno;
+
+    sRetorno = CAESUtils::LongToHex(m_Matrix[0][0]) + " " + CAESUtils::LongToHex(m_Matrix[1][0]) + CAESUtils::LongToHex(m_Matrix[2][0]) + " " + CAESUtils::LongToHex(m_Matrix[3][0]) + "\n" +
+               CAESUtils::LongToHex(m_Matrix[0][1]) + " " + CAESUtils::LongToHex(m_Matrix[1][1]) + CAESUtils::LongToHex(m_Matrix[2][1]) + " " + CAESUtils::LongToHex(m_Matrix[3][1]) + "\n" +
+               CAESUtils::LongToHex(m_Matrix[0][2]) + " " + CAESUtils::LongToHex(m_Matrix[1][2]) + CAESUtils::LongToHex(m_Matrix[2][2]) + " " + CAESUtils::LongToHex(m_Matrix[3][2]) + "\n" +
+               CAESUtils::LongToHex(m_Matrix[0][3]) + " " + CAESUtils::LongToHex(m_Matrix[1][3]) + CAESUtils::LongToHex(m_Matrix[2][3]) + " " + CAESUtils::LongToHex(m_Matrix[3][3]) + "\n";
+
+    return sRetorno;
+}
+
 
 AESWORD& CStateMatrix::operator[](std::size_t index)
 {

@@ -21,5 +21,8 @@ public:
     static AESWORD      XORWords (const AESWORD&      wordA       , const AESWORD&      wordB       );
     static CStateMatrix XORStates(const CStateMatrix& stateMatrixA, const CStateMatrix& stateMatrixB);
 
+    static long GaloisFieldMultiplication(const long lValueA, const long lValueB);
+
+    static std::string LongToHex(const long lValue);
     static std::string WordToString(const AESWORD& word);
 };

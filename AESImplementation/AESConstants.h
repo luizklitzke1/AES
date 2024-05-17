@@ -14,4 +14,6 @@ using AESWORD = std::array<long, WORD_LENGTH>;
 const long ROUND_KEY_AMOUNT = 11;
 const long ROUND_KEY_SIZE   = 4;
 
-const long S_BOX_DIM = 16;
+const long S_BOX_DIM   = 16;
+const long E_TABLE_DIM = 16;
+const long L_TABLE_DIM = 16;
