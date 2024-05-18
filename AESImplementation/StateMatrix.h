@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <string>
 #include "AESConstants.h"
 
 //Utilizada tanto para o estado da matriz como para as keys
@@ -14,12 +15,18 @@ public:
     void ShiftRows ();
     void MixColumns();
 
+    void AdicionaValor(const long lValor);
+
     std::string ToString();
 
     AESWORD& operator[](std::size_t index);
     const AESWORD& operator[](std::size_t index) const;
 
-private:
+public:
     std::array<AESWORD, WORDS_PER_STATE> m_Matrix;
+
+private:
+    ULONG m_ulWord          = 0;
+    ULONG m_ulPoximaPosicao = 0;
 };
 

@@ -21,11 +21,12 @@ void CStateMatrix::SubBytes()
 
 void CStateMatrix::ShiftRows()
 {
-    std::array<AESWORD, WORDS_PER_STATE> matrixAux; //Por algum motivo, não funciona declarar todos logo na definição :/
-    matrixAux[0] = { m_Matrix[0][0], m_Matrix[0][1], m_Matrix[0][2], m_Matrix[0][3] };
-    matrixAux[1] = { m_Matrix[1][1], m_Matrix[1][2], m_Matrix[1][3], m_Matrix[1][0] };
-    matrixAux[2] = { m_Matrix[2][2], m_Matrix[2][3], m_Matrix[2][0], m_Matrix[2][1] };
-    matrixAux[3] = { m_Matrix[3][3], m_Matrix[3][0], m_Matrix[3][1], m_Matrix[3][2] };
+    std::array<AESWORD, WORDS_PER_STATE> matrixAux;
+    //Prestar atenção que aqui a visualização de index fica trocada, porque consideramos uma word uma coluna no visual, (X, Y) no slide aqui é (Y, X) :)
+    matrixAux[0] = { m_Matrix[0][0], m_Matrix[1][1], m_Matrix[2][2], m_Matrix[3][3] };
+    matrixAux[1] = { m_Matrix[1][0], m_Matrix[2][1], m_Matrix[3][2], m_Matrix[0][3] };
+    matrixAux[2] = { m_Matrix[2][0], m_Matrix[3][1], m_Matrix[0][2], m_Matrix[1][3] };
+    matrixAux[3] = { m_Matrix[3][0], m_Matrix[0][1], m_Matrix[1][2], m_Matrix[2][3] };
 
     m_Matrix = matrixAux;
 }
@@ -59,19 +60,34 @@ void CStateMatrix::MixColumns()
                 else
                     lFinalValue ^ lCurrentMultValue;
             }
+
+            resultMatrix[idxWord][idxValue] = lFinalValue;
         }
     }
 
+    m_Matrix = resultMatrix.m_Matrix;
+}
+
+void CStateMatrix::AdicionaValor(const long lValor)
+{
+    m_Matrix[m_ulWord][m_ulPoximaPosicao] = lValor;
+
+    ++m_ulPoximaPosicao;
+    if (m_ulPoximaPosicao == 4)
+    {
+        m_ulPoximaPosicao = 0;
+        ++m_ulWord;
+    }
 }
 
 std::string CStateMatrix::ToString()
 {
     std::string sRetorno;
 
-    sRetorno = CAESUtils::LongToHex(m_Matrix[0][0]) + " " + CAESUtils::LongToHex(m_Matrix[1][0]) + CAESUtils::LongToHex(m_Matrix[2][0]) + " " + CAESUtils::LongToHex(m_Matrix[3][0]) + "\n" +
-               CAESUtils::LongToHex(m_Matrix[0][1]) + " " + CAESUtils::LongToHex(m_Matrix[1][1]) + CAESUtils::LongToHex(m_Matrix[2][1]) + " " + CAESUtils::LongToHex(m_Matrix[3][1]) + "\n" +
-               CAESUtils::LongToHex(m_Matrix[0][2]) + " " + CAESUtils::LongToHex(m_Matrix[1][2]) + CAESUtils::LongToHex(m_Matrix[2][2]) + " " + CAESUtils::LongToHex(m_Matrix[3][2]) + "\n" +
-               CAESUtils::LongToHex(m_Matrix[0][3]) + " " + CAESUtils::LongToHex(m_Matrix[1][3]) + CAESUtils::LongToHex(m_Matrix[2][3]) + " " + CAESUtils::LongToHex(m_Matrix[3][3]) + "\n";
+    sRetorno = CAESUtils::LongToHex(m_Matrix[0][0]) + " " + CAESUtils::LongToHex(m_Matrix[1][0]) + " " + CAESUtils::LongToHex(m_Matrix[2][0]) + " " + CAESUtils::LongToHex(m_Matrix[3][0]) + "\n" +
+               CAESUtils::LongToHex(m_Matrix[0][1]) + " " + CAESUtils::LongToHex(m_Matrix[1][1]) + " " + CAESUtils::LongToHex(m_Matrix[2][1]) + " " + CAESUtils::LongToHex(m_Matrix[3][1]) + "\n" +
+               CAESUtils::LongToHex(m_Matrix[0][2]) + " " + CAESUtils::LongToHex(m_Matrix[1][2]) + " " + CAESUtils::LongToHex(m_Matrix[2][2]) + " " + CAESUtils::LongToHex(m_Matrix[3][2]) + "\n" +
+               CAESUtils::LongToHex(m_Matrix[0][3]) + " " + CAESUtils::LongToHex(m_Matrix[1][3]) + " " + CAESUtils::LongToHex(m_Matrix[2][3]) + " " + CAESUtils::LongToHex(m_Matrix[3][3]) + "\n";
 
     return sRetorno;
 }

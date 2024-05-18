@@ -17,3 +17,5 @@ const long ROUND_KEY_SIZE   = 4;
 const long S_BOX_DIM   = 16;
 const long E_TABLE_DIM = 16;
 const long L_TABLE_DIM = 16;
+
+const long BLOCK_SIZE = WORD_LENGTH * WORDS_PER_STATE;

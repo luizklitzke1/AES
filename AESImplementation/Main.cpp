@@ -115,7 +115,54 @@ int main()
 #pragma endregion
 
 #pragma region Criptografar dados
+    vector<long> aTextoSimples = { 0x44, 0x45, 0x53, 0x45, 0x4e, 0x56, 0x4f, 0x4c, 0x56, 0x49, 0x4d, 0x45, 0x4e, 0x54, 0x4f, 0x21 };
 
+    const size_t ulRestoDivisao = aTextoSimples.size() % BLOCK_SIZE;
+    const size_t ulPaddingSize  = ulRestoDivisao == 0 ? BLOCK_SIZE : BLOCK_SIZE - ulRestoDivisao;
+
+    aTextoSimples.insert(aTextoSimples.end(), ulPaddingSize, ulPaddingSize);
+
+    const size_t ulQuantidadeBlocos = aTextoSimples.size() / BLOCK_SIZE;
+
+    size_t ulContadorChar = 0;
+    for (size_t idxBloco = 0; idxBloco < ulQuantidadeBlocos; ++idxBloco)
+    {
+        CStateMatrix matrizEstadoBloco;
+
+        for (size_t idxAdicao = 0; idxAdicao < BLOCK_SIZE; ++idxAdicao, ++ulContadorChar)
+            matrizEstadoBloco.AdicionaValor(aTextoSimples[ulContadorChar]);
+
+        if (bGenerateLog) cout << "**** Texto simples **** \n" + matrizEstadoBloco.ToString() << endl;
+
+        // Etapa 1 – XOR(textoSimples, RoundKey(0))
+        matrizEstadoBloco = CAESUtils::XORStates(matrizEstadoBloco, aKeySchedule[0]);
+        if (bGenerateLog) cout << "**** AddRoundKey-Round 0 ****\n" + matrizEstadoBloco.ToString() << endl;
+        
+        for (size_t idxRodada = 1; idxRodada < ROUND_KEY_AMOUNT; ++idxRodada)
+        {
+            //Etapa 2 - SubBytes
+            matrizEstadoBloco.SubBytes();
+            if (bGenerateLog) cout << "**** SubBytes-Round " << idxRodada << " ****\n" + matrizEstadoBloco.ToString() << endl;
+
+            //Etapa 3 - ShiftRows
+            matrizEstadoBloco.ShiftRows();
+            if (bGenerateLog) cout << "**** ShiftRows-Round " << idxRodada << " ****\n" + matrizEstadoBloco.ToString() << endl;
+
+            //Etapa 4 - MixColumns
+            if (idxRodada != ROUND_KEY_AMOUNT - 1)
+            {
+                matrizEstadoBloco.MixColumns();
+                if (bGenerateLog) cout << "**** MixColumns-Round " << idxRodada << " ****\n" + matrizEstadoBloco.ToString() << endl;
+            }
+
+            //Etapa 5 - AddRoundKey
+            matrizEstadoBloco = CAESUtils::XORStates(matrizEstadoBloco, aKeySchedule[idxRodada]);
+            if (bGenerateLog) cout << "**** AddRoundKey-Round " << idxRodada << " ****\n" + matrizEstadoBloco.ToString() << endl;
+        }
+
+        if (bGenerateLog) cout << "**** Texto cifrado ****\n" + matrizEstadoBloco.ToString() << endl;
+    }
+    
 #pragma endregion
    
 }
