@@ -1,8 +1,11 @@
 #pragma once
 #include <stdexcept>
+#include <iostream>
 
 #include "StateMatrix.h"
 #include "AESUtils.h"
+
+using namespace std;
 
 void CStateMatrix::SetWordFromArray(const std::vector<long>& aValues, const ULONG ulWordIdx)
 {
@@ -33,10 +36,10 @@ void CStateMatrix::ShiftRows()
 
 void CStateMatrix::MixColumns()
 {
-    long multiplicationMatrix[4][4] = { { 2, 1, 1, 3 },
-                                        { 3, 2, 1, 1 },
-                                        { 1, 3, 2, 1 },
-                                        { 1, 1, 3, 2 }};
+    long multiplicationMatrix[4][4] = { { 2, 3, 1, 1 },
+                                        { 1, 2, 3, 1 },
+                                        { 1, 1, 2, 3 },
+                                        { 3, 1, 1, 2 }};
 
     //Matriz que armazena o resultado final dessa função
     CStateMatrix resultMatrix;
@@ -47,6 +50,8 @@ void CStateMatrix::MixColumns()
 
         for (size_t idxValue = 0; idxValue < WORD_LENGTH; ++idxValue)
         {
+            //cout << "b" << idxValue + 1 + lCol * WORD_LENGTH << " = ";
+
             const long lRow = idxValue;
 
             long lFinalValue = 0;
@@ -54,11 +59,12 @@ void CStateMatrix::MixColumns()
             for (size_t idxMult = 0; idxMult < WORD_LENGTH; ++idxMult)
             {
                 long lCurrentMultValue = CAESUtils::GaloisFieldMultiplication(m_Matrix[lCol][idxMult], multiplicationMatrix[lRow][idxMult]);
+                //out << " (r" << lCol * WORD_LENGTH + idxMult + 1 << " [ " << CAESUtils::LongToHex(m_Matrix[lCol][idxMult]) << "] * " << multiplicationMatrix[lRow][idxMult] << ")[" << lCurrentMultValue << "] ";
 
                 if (idxMult == 0)
                     lFinalValue = lCurrentMultValue;
                 else
-                    lFinalValue ^ lCurrentMultValue;
+                    lFinalValue = lFinalValue ^ lCurrentMultValue;
             }
 
             resultMatrix[idxWord][idxValue] = lFinalValue;

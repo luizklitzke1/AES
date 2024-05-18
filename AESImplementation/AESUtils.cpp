@@ -3,6 +3,7 @@
 
 #include <string>
 #include <sstream>
+#include <iomanip>
 
 bool CAESUtils::IsNumber(const std::string s)
 {
@@ -168,7 +169,7 @@ long CAESUtils::GaloisFieldMultiplication(const long lValueA, const long lValueB
 std::string CAESUtils::LongToHex(const long lValue)
 {
     std::ostringstream oss;
-    oss << "0x" << std::hex << lValue;
+    oss << "0x" << std::hex << std::setw(2) << std::setfill('0') << lValue;
     return oss.str();
 }
 
