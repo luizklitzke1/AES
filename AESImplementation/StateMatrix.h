@@ -8,11 +8,11 @@
 class CStateMatrix
 {
 public:
-    void SetWordFromArray(const std::vector<long>& aValues, const ULONG ulWordIdx);
+    void SetWordFromArray(const std::vector<long>& aValors, const ULONG ulWordIdx);
 
 public:
-    void SubBytes  ();
-    void ShiftRows ();
+    void SubBytes     ();
+    void ShiftLinhas  ();
     void MixColumns();
 
     void AdicionaValor(const long lValor);

@@ -7,12 +7,12 @@
 
 using namespace std;
 
-void CStateMatrix::SetWordFromArray(const std::vector<long>& aValues, const ULONG ulWordIdx)
+void CStateMatrix::SetWordFromArray(const std::vector<long>& aValors, const ULONG ulWordIdx)
 {
     const long lBeginIdx = ulWordIdx * WORD_LENGTH;
 
-    std::copy(aValues.begin() + lBeginIdx,
-              aValues.begin() + lBeginIdx + WORD_LENGTH,
+    std::copy(aValors.begin() + lBeginIdx,
+              aValors.begin() + lBeginIdx + WORD_LENGTH,
               m_Matrix[ulWordIdx].begin());
 }
 
@@ -22,10 +22,10 @@ void CStateMatrix::SubBytes()
         m_Matrix[idxWord] = CAESUtils::SubWord(m_Matrix[idxWord]);
 }
 
-void CStateMatrix::ShiftRows()
+void CStateMatrix::ShiftLinhas()
 {
     std::array<AESWORD, WORDS_PER_STATE> matrixAux;
-    //Prestar atenção que aqui a visualização de index fica trocada, porque consideramos uma word uma coluna no visual, (X, Y) no slide aqui é (Y, X) :)
+    //Prestar atenção que aqui a visualização de index fica trocada, porque consideramos uma word uma Colunauna no visual, (X, Y) no slide aqui é (Y, X) :)
     matrixAux[0] = { m_Matrix[0][0], m_Matrix[1][1], m_Matrix[2][2], m_Matrix[3][3] };
     matrixAux[1] = { m_Matrix[1][0], m_Matrix[2][1], m_Matrix[3][2], m_Matrix[0][3] };
     matrixAux[2] = { m_Matrix[2][0], m_Matrix[3][1], m_Matrix[0][2], m_Matrix[1][3] };
@@ -36,38 +36,38 @@ void CStateMatrix::ShiftRows()
 
 void CStateMatrix::MixColumns()
 {
-    long multiplicationMatrix[4][4] = { { 2, 3, 1, 1 },
-                                        { 1, 2, 3, 1 },
-                                        { 1, 1, 2, 3 },
-                                        { 3, 1, 1, 2 }};
+    long matrizMultiplicacao[4][4] = { { 2, 3, 1, 1 },
+                                       { 1, 2, 3, 1 },
+                                       { 1, 1, 2, 3 },
+                                       { 3, 1, 1, 2 }};
 
     //Matriz que armazena o resultado final dessa função
     CStateMatrix resultMatrix;
 
     for (size_t idxWord = 0; idxWord < WORDS_PER_STATE; ++idxWord)
     {
-        const long lCol = idxWord;
+        const long lColuna = idxWord;
 
-        for (size_t idxValue = 0; idxValue < WORD_LENGTH; ++idxValue)
+        for (size_t idxValor = 0; idxValor < WORD_LENGTH; ++idxValor)
         {
-            //cout << "b" << idxValue + 1 + lCol * WORD_LENGTH << " = ";
+            //cout << "b" << idxValor + 1 + lColuna * WORD_LENGTH << " = ";
 
-            const long lRow = idxValue;
+            const long lLinha = idxValor;
 
-            long lFinalValue = 0;
+            long lValorFinal = 0;
 
             for (size_t idxMult = 0; idxMult < WORD_LENGTH; ++idxMult)
             {
-                long lCurrentMultValue = CAESUtils::GaloisFieldMultiplication(m_Matrix[lCol][idxMult], multiplicationMatrix[lRow][idxMult]);
-                //out << " (r" << lCol * WORD_LENGTH + idxMult + 1 << " [ " << CAESUtils::LongToHex(m_Matrix[lCol][idxMult]) << "] * " << multiplicationMatrix[lRow][idxMult] << ")[" << lCurrentMultValue << "] ";
+                long lCurrentMultValor = CAESUtils::GaloisFieldMultiplication(m_Matrix[lColuna][idxMult], matrizMultiplicacao[lLinha][idxMult]);
+                //out << " (r" << lColuna * WORD_LENGTH + idxMult + 1 << " [ " << CAESUtils::LongToHex(m_Matrix[lColuna][idxMult]) << "] * " << matrizMultiplicacao[lLinha][idxMult] << ")[" << lCurrentMultValor << "] ";
 
                 if (idxMult == 0)
-                    lFinalValue = lCurrentMultValue;
+                    lValorFinal = lCurrentMultValor;
                 else
-                    lFinalValue = lFinalValue ^ lCurrentMultValue;
+                    lValorFinal = lValorFinal ^ lCurrentMultValor;
             }
 
-            resultMatrix[idxWord][idxValue] = lFinalValue;
+            resultMatrix[idxWord][idxValor] = lValorFinal;
         }
     }
 

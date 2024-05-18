@@ -10,19 +10,19 @@ class CAESUtils
 public:
     static bool IsNumber(const std::string s);
 
-    static ULONG GetLeastSignificantBits(long value);
-    static ULONG GetMostSignificantBits(long value);
+    static long GetLeastSignificantBits(const long lValor);
+    static long GetMostSignificantBits (const long lValor);
 
-    static long SubByte(const long lValue);
+    static long SubByte(const long lValor);
 
-    static AESWORD RotWord (const AESWORD& word);
-    static AESWORD SubWord (const AESWORD& word);
+    static AESWORD RotWord(const AESWORD& word);
+    static AESWORD SubWord(const AESWORD& word);
 
     static AESWORD      XORWords (const AESWORD&      wordA       , const AESWORD&      wordB       );
     static CStateMatrix XORStates(const CStateMatrix& stateMatrixA, const CStateMatrix& stateMatrixB);
 
-    static long GaloisFieldMultiplication(const long lValueA, const long lValueB);
+    static long GaloisFieldMultiplication(const long lValorA, const long lValorB);
 
-    static std::string LongToHex(const long lValue);
-    static std::string WordToString(const AESWORD& word);
+    static std::string LongToHex   (const long     lValor);
+    static std::string WordToString(const AESWORD& word  );
 };

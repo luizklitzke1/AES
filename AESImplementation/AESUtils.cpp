@@ -76,32 +76,32 @@ bool CAESUtils::IsNumber(const std::string s)
     return true;
 }
 
-ULONG CAESUtils::GetLeastSignificantBits(long value)
+long CAESUtils::GetLeastSignificantBits(long lValor)
 {
     // Mascara para o 4 bits menos significativos: 0000 1111 (0xF)
-    return value & 0xF;
+    return lValor & 0xF;
 }
 
-ULONG CAESUtils::GetMostSignificantBits(long value)
+long CAESUtils::GetMostSignificantBits(long lValor)
 {
     // Só jogar 4 bits pra direita, só sobrando os mais significativos
-    return static_cast<ULONG>(value) >> 4;
+    return lValor >> 4;
 }
 
-long CAESUtils::SubByte(const long lValue)
+long CAESUtils::SubByte(const long lValor)
 {
-    const ULONG ulMostSignificantBitsValue  = GetMostSignificantBits (lValue);
-    const ULONG ulLeastSignificantBitsValue = GetLeastSignificantBits(lValue);
+    const long ulMostSignificantBitsValor  = GetMostSignificantBits (lValor);
+    const long ulLeastSignificantBitsValor = GetLeastSignificantBits(lValor);
 
-    return SBOX[ulMostSignificantBitsValue][ulLeastSignificantBitsValue];
+    return SBOX[ulMostSignificantBitsValor][ulLeastSignificantBitsValor];
 }
 
 AESWORD CAESUtils::SubWord(const AESWORD& word)
 {
     AESWORD wordRetorno = word;
 
-    for (size_t idxValue = 0; idxValue < WORD_LENGTH; ++idxValue)
-        wordRetorno[idxValue] = CAESUtils::SubByte(word[idxValue]);
+    for (size_t idxValor = 0; idxValor < WORD_LENGTH; ++idxValor)
+        wordRetorno[idxValor] = CAESUtils::SubByte(word[idxValor]);
 
     return wordRetorno;
 }
@@ -115,8 +115,8 @@ AESWORD CAESUtils::XORWords(const AESWORD& wordA, const AESWORD& wordB)
 {
     AESWORD wordResult;
 
-    for (size_t idxValue = 0; idxValue < WORD_LENGTH; ++idxValue)
-        wordResult[idxValue] = wordA[idxValue] ^ wordB[idxValue];
+    for (size_t idxValor = 0; idxValor < WORD_LENGTH; ++idxValor)
+        wordResult[idxValor] = wordA[idxValor] ^ wordB[idxValor];
 
     return wordResult;
 }
@@ -131,45 +131,45 @@ CStateMatrix CAESUtils::XORStates(const CStateMatrix& stateMatrixA, const CState
     return matrixResult;
 }
 
-long CAESUtils::GaloisFieldMultiplication(const long lValueA, const long lValueB)
+long CAESUtils::GaloisFieldMultiplication(const long lValorA, const long lValorB)
 {
     //Se um dos termos for 0, o resultado da multiplicação é 0
-    if (lValueA == 0 || lValueB == 0)
+    if (lValorA == 0 || lValorB == 0)
         return 0;
 
     //Se um dos termos for 1, o resultado da multiplicação é igual ao outro termo
-    if (lValueA == 1)
-        return lValueB;
+    if (lValorA == 1)
+        return lValorB;
 
-    if (lValueB == 1)
-        return lValueA;
+    if (lValorB == 1)
+        return lValorA;
 
     //Se os termos não forem 0 e nem 1, deve-se recorrer à tabela L e à tabela E
-    const long lRowValueA    = GetMostSignificantBits (lValueA);
-    const long lColValueA    = GetLeastSignificantBits(lValueA);
-    const long lLTableValueA = LTABLE[lRowValueA][lColValueA];
+    const long lLinhaValorA  = GetMostSignificantBits (lValorA);
+    const long lColunaValorA = GetLeastSignificantBits(lValorA);
+    const long lLTableValorA = LTABLE[lLinhaValorA][lColunaValorA];
 
-    const long lRowValueB    = GetMostSignificantBits (lValueB);
-    const long lColValueB    = GetLeastSignificantBits(lValueB);
-    const long lLTableValueB = LTABLE[lRowValueB][lColValueB];
+    const long lLinhaValorB  = GetMostSignificantBits (lValorB);
+    const long lColunaValorB = GetLeastSignificantBits(lValorB);
+    const long lLTableValorB = LTABLE[lLinhaValorB][lColunaValorB];
 
     //Em seguida, somam-se os valores
-    long lSumValue = lLTableValueA + lLTableValueB;
+    long lSomaValor = lLTableValorA + lLTableValorB;
 
     //Se o resultado da soma ultrapassar 0𝑥FF, faz-se ajuste, subtraindo o valor de 0𝑥FF: resultado - 0xFF;
-    if (lSumValue > 0xFF)
-        lSumValue -= 0xFF;
+    if (lSomaValor > 0xFF)
+        lSomaValor -= 0xFF;
 
-    const long lETableRow = GetMostSignificantBits (lSumValue);
-    const long lETableCol = GetLeastSignificantBits(lSumValue);
+    const long lETableLinha  = GetMostSignificantBits (lSomaValor);
+    const long lETableColuna = GetLeastSignificantBits(lSomaValor);
 
-    return ETABLE[lETableRow][lETableCol];
+    return ETABLE[lETableLinha][lETableColuna];
 }
 
-std::string CAESUtils::LongToHex(const long lValue)
+std::string CAESUtils::LongToHex(const long lValor)
 {
     std::ostringstream oss;
-    oss << "0x" << std::hex << std::setw(2) << std::setfill('0') << lValue;
+    oss << "0x" << std::hex << std::setw(2) << std::setfill('0') << lValor;
     return oss.str();
 }
 
@@ -177,8 +177,8 @@ std::string CAESUtils::WordToString(const AESWORD& word)
 {
     std::string sRetorno = "[ ";
 
-    for (const long& lValue : word)
-        sRetorno += LongToHex(lValue) + " ";
+    for (const long& lValor : word)
+        sRetorno += LongToHex(lValor) + " ";
 
     return sRetorno += "]";
 }
