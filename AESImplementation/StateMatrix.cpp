@@ -25,7 +25,7 @@ void CStateMatrix::SubBytes()
 void CStateMatrix::ShiftLinhas()
 {
     std::array<AESWORD, WORDS_PER_STATE> matrixAux;
-    //Prestar atenção que aqui a visualização de index fica trocada, porque consideramos uma word uma Colunauna no visual, (X, Y) no slide aqui é (Y, X) :)
+    //Prestar atenção que aqui a visualização de index fica trocada, porque consideramos uma word uma Coluna no visual, (X, Y) no slide aqui é (Y, X) :)
     matrixAux[0] = { m_Matrix[0][0], m_Matrix[1][1], m_Matrix[2][2], m_Matrix[3][3] };
     matrixAux[1] = { m_Matrix[1][0], m_Matrix[2][1], m_Matrix[3][2], m_Matrix[0][3] };
     matrixAux[2] = { m_Matrix[2][0], m_Matrix[3][1], m_Matrix[0][2], m_Matrix[1][3] };
@@ -39,7 +39,7 @@ void CStateMatrix::MixColumns()
     long matrizMultiplicacao[4][4] = { { 2, 3, 1, 1 },
                                        { 1, 2, 3, 1 },
                                        { 1, 1, 2, 3 },
-                                       { 3, 1, 1, 2 }};
+                                       { 3, 1, 1, 2 } };
 
     //Matriz que armazena o resultado final dessa função
     CStateMatrix resultMatrix;
@@ -97,7 +97,6 @@ std::string CStateMatrix::ToString()
 
     return sRetorno;
 }
-
 
 AESWORD& CStateMatrix::operator[](std::size_t index)
 {

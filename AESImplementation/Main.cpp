@@ -14,6 +14,8 @@
 #include <conio.h>
 #include "windows.h"
 
+#include <fstream>
+
 using namespace std;
 
 int main()
@@ -23,9 +25,16 @@ int main()
 
     FILE* fp = nullptr;
     bool bGeraLog = true;
+
     if (bGeraLog)
     {
-        fopen_s(&fp, "log.txt", "a");
+        errno_t err = fopen_s(&fp, "log.txt", "a");
+        if (err != 0 || fp == nullptr)
+        {
+            cout << "Erro ao abrir o arquivo de log." << endl;
+            return 1;
+        }
+
         fprintf(fp, "Executado em: %s\n", CAESUtils::GetTimeString().c_str());
     }
 
@@ -121,7 +130,32 @@ int main()
 #pragma endregion
 
 #pragma region Criptografar dados
-    vector<long> aTextoSimples = { 0x44, 0x45, 0x53, 0x45, 0x4e, 0x56, 0x4f, 0x4c, 0x56, 0x49, 0x4d, 0x45, 0x4e, 0x54, 0x4f, 0x21 };
+
+    string filePath = "C:\\Users\\luizk\\OneDrive\\Documentos\\AES\\InputExemplo.txt";
+    ifstream inputFile;
+    inputFile.open(filePath);
+
+    if (inputFile.fail())
+    {
+        cout << "Erro ao abrir o arquivo: " << filePath << endl;
+        return 1;
+    }
+
+    string aTextoSimples;
+
+    while (!inputFile.eof())
+    {
+        string sAux;
+        getline(inputFile, sAux);
+        aTextoSimples.append(sAux);
+    }
+
+    inputFile.close();
+    if (inputFile.fail())
+    {
+        cout << "Erro ao fechar o arquivo: " << filePath << endl;
+        return 1;
+    }
 
     const ULONG ulRestoDivisao = aTextoSimples.size() % BLOCK_SIZE;
     const ULONG ulPaddingSize  = ulRestoDivisao == 0 ? BLOCK_SIZE : BLOCK_SIZE - ulRestoDivisao;
