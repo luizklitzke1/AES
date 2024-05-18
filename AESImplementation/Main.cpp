@@ -77,7 +77,7 @@ int main()
     //Deve ser um campo texto em que possa ser fornecido os valores dos bytes da chave em formato decimal, separando - os por vírgula
     vector<long> aKey;
     {
-        std::cout << "Informe a chave de criptografia de 128 bits: ";
+        std::cout << "Informe a chave de criptografia de 128 bits (valores decimais separados por ','): ";
 
         string sKeyInput;
         cin.ignore();
@@ -114,7 +114,7 @@ int main()
 
         if (aKey.size() != 16)
         {
-            std::cout << "A chave informada não é de 128bits!" << endl;
+            std::cout << "A chave informada não é de 128 bits!" << endl;
             return 1;
         }
     }
