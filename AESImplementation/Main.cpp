@@ -166,7 +166,7 @@ int main()
             if (bGeraLog) fprintf(fp, "**** AddRoundKey-Round %d ****\n%s\n", idxRodada, matrizEstadoBloco.ToString().c_str());
         }
 
-        if (bGeraLog) fprintf(fp, "**** Texto cifrado **** \n%s\n", matrizEstadoBloco.ToString().c_str());;
+        if (bGeraLog) fprintf(fp, "**** Texto cifrado Bloco = %d **** \n%s\n", idxBloco, matrizEstadoBloco.ToString().c_str());;
     }
 #pragma endregion
 }
