@@ -182,3 +182,14 @@ std::string CAESUtils::WordToString(const AESWORD& word)
 
     return sRetorno += "]";
 }
+
+std::string CAESUtils::GetTimeString()
+{
+    char texto[40];
+    struct tm newtime;
+    time_t now = time(0);
+    localtime_s(&newtime,&now);
+    strftime(texto, sizeof(texto), "%d/%m/%Y - %H:%M:%S", &newtime);
+
+    return texto;
+}

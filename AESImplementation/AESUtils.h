@@ -25,4 +25,6 @@ public:
 
     static std::string LongToHex   (const long     lValor);
     static std::string WordToString(const AESWORD& word  );
+
+    static std::string GetTimeString();
 };

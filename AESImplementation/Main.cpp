@@ -21,7 +21,13 @@ int main()
     SetConsoleCP      (1252);
     SetConsoleOutputCP(1252);
 
+    FILE* fp = nullptr;
     bool bGeraLog = true;
+    if (bGeraLog)
+    {
+        fopen_s(&fp, "log.txt", "a");
+        fprintf(fp, "Executado em: %s\n", CAESUtils::GetTimeString().c_str());
+    }
 
     stringstream sKey("65, 66 , 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80");
     
@@ -66,34 +72,34 @@ int main()
     //Gerar demais round key
     for (ULONG idxRoundKey = 1; idxRoundKey < ROUND_KEY_AMOUNT; ++idxRoundKey)
     {
-        if (bGeraLog) cout << "\n**** RoundKey = " << idxRoundKey << " ****" << endl;
+        if (bGeraLog) fprintf(fp, "\n**** RoundKey = %d  ****\n", idxRoundKey);
 
         CStateMatrix& roundKey = aKeySchedule[idxRoundKey];
 
 #pragma region Gerar primeira Word da RoundKey
         //1 - Copia última palavra da round key anterior
         AESWORD primeiraWord = aKeySchedule[idxRoundKey - 1][WORDS_PER_STATE - 1];
-        if (bGeraLog) cout << "1) Cópia da última palavra da roundkey anterior: " + CAESUtils::WordToString(primeiraWord) << endl;
+        if (bGeraLog) fprintf(fp, "1) Cópia da última palavra da roundkey anterior: %s\n", CAESUtils::WordToString(primeiraWord).c_str());
         
         //2 - Rotacionar os bytes
         primeiraWord = CAESUtils::RotWord(primeiraWord);
-        if (bGeraLog) cout << "2) Rotacionar os bytes desta palavra (RotWord): " + CAESUtils::WordToString(primeiraWord) << endl;
+        if (bGeraLog) fprintf(fp, "2) Rotacionar os bytes desta palavra (RotWord): %s\n", CAESUtils::WordToString(primeiraWord).c_str());
 
         //3 - Substituição de palavra com a SBOX
         primeiraWord = CAESUtils::SubWord(primeiraWord);
-        if (bGeraLog) cout << "3) Substituir os bytes da palavra (SubWord): " + CAESUtils::WordToString(primeiraWord) << endl;
+        if (bGeraLog) fprintf(fp, "3) Substituir os bytes da palavra (SubWord): %s\n", CAESUtils::WordToString(primeiraWord).c_str());
 
         //4 - Geração da RoundConstant
         const AESWORD roundConstant = { ROUND_CONSTANTS[idxRoundKey - 1] , 0x00, 0x00, 0x00 };
-        if (bGeraLog) cout << "4) Gerar a RoundConstant: " + CAESUtils::WordToString(roundConstant) << endl;
+        if (bGeraLog) fprintf(fp, "4) Gerar a RoundConstant: %s\n", CAESUtils::WordToString(roundConstant).c_str());
 
         //5 - XOR das etapas (3) e (4) 
         primeiraWord = CAESUtils::XORWords(primeiraWord, roundConstant);
-        if (bGeraLog) cout << "5) XOR de (3) com (4): " + CAESUtils::WordToString(primeiraWord) << endl;
+        if (bGeraLog) fprintf(fp, "5) XOR de (3) com (4): %s\n", CAESUtils::WordToString(primeiraWord).c_str());
 
         //6 - XOR de (5) com a 1ª palavra da roundkey anterior
         primeiraWord = CAESUtils::XORWords(primeiraWord, aKeySchedule[idxRoundKey - 1][0]);
-        if (bGeraLog) cout << "6) XOR 1a. palavra da roundkey anterior com (5): " + CAESUtils::WordToString(primeiraWord) << endl;
+        if (bGeraLog) fprintf(fp, "6) XOR 1a. palavra da roundkey anterior com (5): %s\n", CAESUtils::WordToString(primeiraWord).c_str());
 
         roundKey[0] = primeiraWord;
 
@@ -105,11 +111,11 @@ int main()
             //XOR com a palavra imediatamente anterior e a palavra de posição equivalente na round key anterior.
             roundKey[idxWord] = CAESUtils::XORWords(roundKey[idxWord - 1], aKeySchedule[idxRoundKey - 1][idxWord]);
 
-            if (bGeraLog) cout << "W" << ROUND_KEY_SIZE * idxRoundKey + idxWord << " = W" << ROUND_KEY_SIZE * idxRoundKey + idxWord - 1 << " XOR W" << ROUND_KEY_SIZE * (idxRoundKey - 1) + idxWord << endl;
+            if (bGeraLog) fprintf(fp, "W %d  = W %d XOR W%d\n", ROUND_KEY_SIZE * idxRoundKey + idxWord, ROUND_KEY_SIZE * idxRoundKey + idxWord - 1, ROUND_KEY_SIZE * (idxRoundKey - 1) + idxWord);
         }
 #pragma endregion
 
-        if (bGeraLog) cout << endl << roundKey.ToString() << endl;
+        if (bGeraLog) fprintf(fp, "\n%s\n", roundKey.ToString().c_str());
     }
 
 #pragma endregion
@@ -132,35 +138,35 @@ int main()
         for (ULONG idxAdicao = 0; idxAdicao < BLOCK_SIZE; ++idxAdicao, ++ulContadorChar)
             matrizEstadoBloco.AdicionaValor(aTextoSimples[ulContadorChar]);
 
-        if (bGeraLog) cout << "**** Texto simples **** \n" + matrizEstadoBloco.ToString() << endl;
+        if (bGeraLog) fprintf(fp, "**** Texto simples **** \n%s\n", matrizEstadoBloco.ToString().c_str());
 
         // Etapa 1 – XOR(textoSimples, RoundKey(0))
         matrizEstadoBloco = CAESUtils::XORStates(matrizEstadoBloco, aKeySchedule[0]);
-        if (bGeraLog) cout << "**** AddRoundKey-Round 0 ****\n" + matrizEstadoBloco.ToString() << endl;
+        if (bGeraLog) fprintf(fp, "**** AddRoundKey-Round 0 ****\n%s\n", matrizEstadoBloco.ToString().c_str());
         
         for (ULONG idxRodada = 1; idxRodada < ROUND_KEY_AMOUNT; ++idxRodada)
         {
             //Etapa 2 - SubBytes
             matrizEstadoBloco.SubBytes();
-            if (bGeraLog) cout << "**** SubBytes-Round " << idxRodada << " ****\n" + matrizEstadoBloco.ToString() << endl;
+            if (bGeraLog) fprintf(fp, "**** SubBytes-Round %d ****\n%s\n", idxRodada, matrizEstadoBloco.ToString().c_str());
 
             //Etapa 3 - ShiftLinhas
             matrizEstadoBloco.ShiftLinhas();
-            if (bGeraLog) cout << "**** ShiftLinhas-Round " << idxRodada << " ****\n" + matrizEstadoBloco.ToString() << endl;
+            if (bGeraLog) fprintf(fp, "**** ShiftLinhas-Round %d ****\n%s\n", idxRodada, matrizEstadoBloco.ToString().c_str());
 
             //Etapa 4 - MixColumns
             if (idxRodada != ROUND_KEY_AMOUNT - 1)
             {
                 matrizEstadoBloco.MixColumns();
-                if (bGeraLog) cout << "**** MixColumns-Round " << idxRodada << " ****\n" + matrizEstadoBloco.ToString() << endl;
+                if (bGeraLog) fprintf(fp, "**** MixColumns-Round %d ****\n%s\n", idxRodada, matrizEstadoBloco.ToString().c_str());
             }
 
             //Etapa 5 - AddRoundKey
             matrizEstadoBloco = CAESUtils::XORStates(matrizEstadoBloco, aKeySchedule[idxRodada]);
-            if (bGeraLog) cout << "**** AddRoundKey-Round " << idxRodada << " ****\n" + matrizEstadoBloco.ToString() << endl;
+            if (bGeraLog) fprintf(fp, "**** AddRoundKey-Round %d ****\n%s\n", idxRodada, matrizEstadoBloco.ToString().c_str());
         }
 
-        if (bGeraLog) cout << "**** Texto cifrado ****\n" + matrizEstadoBloco.ToString() << endl;
+        if (bGeraLog) fprintf(fp, "**** Texto cifrado **** \n%s\n", matrizEstadoBloco.ToString().c_str());;
     }
 #pragma endregion
 }
