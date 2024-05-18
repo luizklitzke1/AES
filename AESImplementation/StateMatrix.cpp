@@ -98,6 +98,19 @@ std::string CStateMatrix::ToString()
     return sRetorno;
 }
 
+std::string CStateMatrix::ToCharArray()
+{
+    std::string sRetorno;
+
+    for (size_t idxWord = 0; idxWord < WORDS_PER_STATE; ++idxWord)
+    {
+        for (size_t idxValor = 0; idxValor < WORD_LENGTH; ++idxValor)
+            sRetorno += m_Matrix[idxWord][idxValor];
+    }
+
+    return sRetorno;
+}
+
 AESWORD& CStateMatrix::operator[](std::size_t index)
 {
     if (index >= WORDS_PER_STATE)
