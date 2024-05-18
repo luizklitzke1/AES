@@ -25,6 +25,7 @@ int main()
 #pragma region Input Inicial
     std::cout << "[CRIPTOGRAFIA AES]" << endl;
     std::cout << "Alunos: Arthur B. Pinotti, Kaue Reblin, Luiz G. Klitzke" << endl;
+    std::cout << "Modo ECB, chave e blocos de 128 bits e preenchimento PKCS#7" << endl << endl;
 
     //Permitir que o usuário informe um arquivo a ser criptografado. O programa deverá suportar qualquer arquivo (texto ou binário) e de qualquer tamanho;
     string aTextoSimples;
@@ -194,7 +195,7 @@ int main()
             //XOR com a palavra imediatamente anterior e a palavra de posição equivalente na round key anterior.
             roundKey[idxWord] = CAESUtils::XORWords(roundKey[idxWord - 1], aKeySchedule[idxRoundKey - 1][idxWord]);
 
-            if (bGeraLog) fprintf(fpLog, "W %d  = W %d XOR W%d\n", ROUND_KEY_SIZE * idxRoundKey + idxWord, ROUND_KEY_SIZE * idxRoundKey + idxWord - 1, ROUND_KEY_SIZE * (idxRoundKey - 1) + idxWord);
+            if (bGeraLog) fprintf(fpLog, "W%d = W%d XOR W%d\n", ROUND_KEY_SIZE * idxRoundKey + idxWord, ROUND_KEY_SIZE * idxRoundKey + idxWord - 1, ROUND_KEY_SIZE * (idxRoundKey - 1) + idxWord);
         }
 #pragma endregion
 
