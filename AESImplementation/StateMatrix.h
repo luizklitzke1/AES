@@ -17,8 +17,8 @@ public:
 
     void AdicionaValor(const long lValor);
 
-    std::string ToString   ();
-    std::string ToCharArray();
+    std::string       ToString   ();
+    std::vector<char> ToCharArray();
 
     AESWORD& operator[](std::size_t index);
     const AESWORD& operator[](std::size_t index) const;

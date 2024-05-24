@@ -28,48 +28,50 @@ int main()
     std::cout << "Modo ECB, chave e blocos de 128 bits e preenchimento PKCS#7" << endl << endl;
 
     //Permitir que o usuário informe um arquivo a ser criptografado. O programa deverá suportar qualquer arquivo (texto ou binário) e de qualquer tamanho;
-    string aTextoSimples;
+    vector<char> aTextoSimples;
     {
         std::cout << "Informe o caminho do arquivo para ser criptografado: ";
         string sFilePath;
         cin >> sFilePath;
 
-        ifstream inputFile;
-        inputFile.open(sFilePath);
+        ifstream inputFile(sFilePath, std::ios_base::binary);
 
         if (inputFile.fail())
         {
-            std::cout << "Erro ao abrir o arquivo: " << sFilePath << endl;
+            std::cerr << "Erro ao abrir o arquivo: " << sFilePath << endl;
             return 1;
         }
 
-        while (!inputFile.eof())
+        inputFile.seekg(0, std::ios::end);
+        streampos fileSize = inputFile.tellg();
+        inputFile.seekg(0, std::ios::beg);
+
+        aTextoSimples.resize(fileSize);
+        inputFile.read(aTextoSimples.data(), fileSize);
+        if (inputFile.fail())
         {
-            string sAux;
-            getline(inputFile, sAux);
-            aTextoSimples.append(sAux);
+            std::cerr << "Erro ao ler o arquivo: " << sFilePath << endl;
+            return 1;
         }
 
         inputFile.close();
         if (inputFile.fail())
         {
-            std::cout << "Erro ao fechar o arquivo: " << sFilePath << endl;
+            std::cerr << "Erro ao fechar o arquivo: " << sFilePath << endl;
             return 1;
         }
     }
 
     //Permitir que o usuário possa informar o nome do arquivo de destino a ser gerado;
     string sNomeArquivoResult;
-    FILE* fpResult = nullptr;
+    ofstream outputFile;
     {
         std::cout << "Informe o caminho do arquivo a ser gerado (Caso já existir, será destruído): ";
         cin >> sNomeArquivoResult;
 
-        //Abre um arquivo vazio para gravação. Se o arquivo determinado existir, seus conteúdos são destruídos.
-        errno_t err = fopen_s(&fpResult, sNomeArquivoResult.c_str(), "w");
-        if (err != 0 || fpResult == nullptr)
-        {
-            std::cout << "Erro ao abrir o arquivo de resultado: " << err << endl;
+        outputFile = ofstream(sNomeArquivoResult, std::ios::binary);
+        if (!outputFile) {
+            std::cerr << "Erro ao abrir o arquivo de saída: " << sNomeArquivoResult << std::endl;
             return 1;
         }
     }
@@ -99,14 +101,14 @@ int main()
         {
             if (CAESUtils::IsNumber(sKeySegment) == false)
             {
-                std::cout << "Valor não númerico informado para um segmento da chave: " << sKeySegment << endl;
+                std::cerr << "Valor não númerico informado para um segmento da chave: " << sKeySegment << endl;
                 return 1;
             }
 
             long lValor = stol(sKeySegment);
             if (lValor > 255)
             {
-                std::cout << "Valor superior a 255 informado para um segmento da chave: " << sKeySegment << endl;
+                std::cerr << "Valor superior a 255 informado para um segmento da chave: " << sKeySegment << endl;
                 return 1;
             }
 
@@ -115,7 +117,7 @@ int main()
 
         if (aKey.size() != 16)
         {
-            std::cout << "A chave informada não é de 128 bits!" << endl;
+            std::cerr << "A chave informada não é de 128 bits!" << endl;
             return 1;
         }
     }
@@ -212,7 +214,7 @@ int main()
 
     const ULONG ulQuantidadeBlocos = aTextoSimples.size() / BLOCK_SIZE;
 
-    string sTextoCifrado;
+    vector<char> aTextoCifrado;
 
     ULONG ulContadorChar = 0;
     for (ULONG idxBloco = 0; idxBloco < ulQuantidadeBlocos; ++idxBloco)
@@ -252,14 +254,20 @@ int main()
 
         if (bGeraLog) fprintf(fpLog, "**** Texto cifrado Bloco = %d **** \n%s\n", idxBloco, matrizEstadoBloco.ToString().c_str());;
 
-        sTextoCifrado.append(matrizEstadoBloco.ToCharArray());
+        vector<char> aBlocoCifrado = matrizEstadoBloco.ToCharArray();
+        aTextoCifrado.insert(aTextoCifrado.end(), aBlocoCifrado.begin(), aBlocoCifrado.end());
     }
 
-    fprintf(fpResult, sTextoCifrado.c_str());
+    outputFile.write(aTextoCifrado.data(), aTextoCifrado.size());
+    if (outputFile.fail()) {
+        std::cerr << "Erro ao escrever no arquivo de resultado." << std::endl;
+        outputFile.close();
+        return 1;
+    }
 
-    if (fclose(fpResult))
-    {
-        std::cout << "Erro ao fechar o arquivo de resultado." << endl;
+    outputFile.close();
+    if (outputFile.fail()) {
+        std::cerr << "Erro ao fechar o arquivo de resultado." << std::endl;
         return 1;
     }
 

@@ -98,17 +98,18 @@ std::string CStateMatrix::ToString()
     return sRetorno;
 }
 
-std::string CStateMatrix::ToCharArray()
+std::vector<char> CStateMatrix::ToCharArray()
 {
-    std::string sRetorno;
+    std::vector<char> aRetorno;
+    aRetorno.reserve(WORDS_PER_STATE * WORD_LENGTH);
 
     for (size_t idxWord = 0; idxWord < WORDS_PER_STATE; ++idxWord)
     {
         for (size_t idxValor = 0; idxValor < WORD_LENGTH; ++idxValor)
-            sRetorno += m_Matrix[idxWord][idxValor];
+            aRetorno.push_back(m_Matrix[idxWord][idxValor]);
     }
 
-    return sRetorno;
+    return aRetorno;
 }
 
 AESWORD& CStateMatrix::operator[](std::size_t index)
