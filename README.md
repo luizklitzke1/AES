@@ -1,6 +1,6 @@
 # [Criptografia AES]
 <p><b>Alunos:</b> Arthur B. Pinotti, Kaue Reblin, Luiz G. Klitzke.</p>
-<p>Modo <b>ECB</b>b>, chave e blocos de <b>128</b> bits e preenchimento <b>PKCS#7</b>.</p>
+<p>Modo <b>ECB</b>, chave e blocos de <b>128</b> bits e preenchimento <b>PKCS#7</b>.</p>
 
 <p>Implementação do algoritmo AES em ECB como trabalho final da matéria de Segurança da Informação - FURB
 
