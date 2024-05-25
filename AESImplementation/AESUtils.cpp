@@ -4,6 +4,8 @@
 #include <string>
 #include <sstream>
 #include <iomanip>
+#include <iostream>
+#include <conio.h> 
 
 static const long SBOX[S_BOX_DIM][S_BOX_DIM] =
 {
@@ -192,4 +194,12 @@ std::string CAESUtils::GetTimeString()
     strftime(texto, sizeof(texto), "%d/%m/%Y - %H:%M:%S", &newtime);
 
     return texto;
+}
+
+void CAESUtils::WaitKey()
+{
+    std::cout << "Pressione qualquer tecla para fechar a aplicação...\n";
+    _getch();
+
+    return;
 }

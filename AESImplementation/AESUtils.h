@@ -27,4 +27,6 @@ public:
     static std::string WordToString(const AESWORD& word  );
 
     static std::string GetTimeString();
+
+    static void WaitKey();
 };

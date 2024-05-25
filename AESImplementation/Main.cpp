@@ -39,6 +39,7 @@ int main()
         if (inputFile.fail())
         {
             std::cerr << "Erro ao abrir o arquivo: " << sFilePath << endl;
+            CAESUtils::WaitKey();
             return 1;
         }
 
@@ -51,6 +52,7 @@ int main()
         if (inputFile.fail())
         {
             std::cerr << "Erro ao ler o arquivo: " << sFilePath << endl;
+            CAESUtils::WaitKey();
             return 1;
         }
 
@@ -58,6 +60,7 @@ int main()
         if (inputFile.fail())
         {
             std::cerr << "Erro ao fechar o arquivo: " << sFilePath << endl;
+            CAESUtils::WaitKey();
             return 1;
         }
     }
@@ -72,6 +75,7 @@ int main()
         outputFile = ofstream(sNomeArquivoResult, std::ios::binary);
         if (!outputFile) {
             std::cerr << "Erro ao abrir o arquivo de saída: " << sNomeArquivoResult << std::endl;
+            CAESUtils::WaitKey();
             return 1;
         }
     }
@@ -101,7 +105,8 @@ int main()
         {
             if (CAESUtils::IsNumber(sKeySegment) == false)
             {
-                std::cerr << "Valor não númerico informado para um segmento da chave: " << sKeySegment << endl;
+                std::cerr << "Valor não numérico informado para um segmento da chave: " << sKeySegment << endl;
+                CAESUtils::WaitKey();
                 return 1;
             }
 
@@ -109,6 +114,7 @@ int main()
             if (lValor > 255)
             {
                 std::cerr << "Valor superior a 255 informado para um segmento da chave: " << sKeySegment << endl;
+                CAESUtils::WaitKey();
                 return 1;
             }
 
@@ -118,6 +124,7 @@ int main()
         if (aKey.size() != 16)
         {
             std::cerr << "A chave informada não é de 128 bits!" << endl;
+            CAESUtils::WaitKey();
             return 1;
         }
     }
@@ -261,6 +268,7 @@ int main()
     outputFile.write(aTextoCifrado.data(), aTextoCifrado.size());
     if (outputFile.fail()) {
         std::cerr << "Erro ao escrever no arquivo de resultado." << std::endl;
+        CAESUtils::WaitKey();
         outputFile.close();
         return 1;
     }
@@ -268,12 +276,14 @@ int main()
     outputFile.close();
     if (outputFile.fail()) {
         std::cerr << "Erro ao fechar o arquivo de resultado." << std::endl;
+        CAESUtils::WaitKey();
         return 1;
     }
 
     if (fpLog != nullptr && fclose(fpLog))
     {
         std::cout << "Erro ao fechar o arquivo de log." << endl;
+        CAESUtils::WaitKey();
         return 1;
     }
 #pragma endregion
