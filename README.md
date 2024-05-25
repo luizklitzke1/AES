@@ -23,3 +23,6 @@ ResultadoExemplo.AES
 65, 66 , 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80
 y
 ```
+## Aviso de erros
+Ao informar algum argumento inválido pelo terminal, o mesmo ira apresentar uma mensagem detalhando o motivo, e um aviso aguardando qualquer input para fechar a aplicação.
+Obs: Caso o input seja colado de 1 vez, o terminal será fechado, uma vez que o segundo argumento será tido como um input.
